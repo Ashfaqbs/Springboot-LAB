@@ -8,3 +8,15 @@ int exitCode = process.exitValue();
 
 processBuilder.command(new String[]{"curl", "-X", "GET", "https://postman-echo.com?foo=bar"});
 process.destroy();
+
+
+
+---
+Process process = Runtime.getRuntime().exec(command);
+BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+String line;
+while ((line = reader.readLine()) != null) {
+    System.out.println(line);
+}
+reader.close();
+process.destroy();
