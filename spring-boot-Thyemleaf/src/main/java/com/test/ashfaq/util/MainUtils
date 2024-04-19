@@ -1,0 +1,41 @@
+public class MainUtils {
+    public static String sanitizeFileName(String fileName) {
+        // Remove or replace potentially harmful characters
+        fileName = fileName.replaceAll("\\.\\.", "")
+                           .replaceAll("//", "/")
+                           .replaceAll("\\\\", "/");
+
+        // Ensure the file path does not navigate to parent directories
+        fileName = fileName.replaceAll("/+", "/"); // Remove consecutive slashes
+        fileName = fileName.replaceAll("^\\.*/", ""); // Remove leading slashes and dots
+        fileName = fileName.replaceAll("/\\.\\./", "/"); // Remove parent directory navigation
+
+        // Canonicalize / normalize the file path
+        fileName = java.nio.file.Paths.get(fileName).normalize().toString();
+
+        return fileName;
+    }
+
+    public static void main(String[] args) {
+        // Test reporting years
+        String[] reportingYears = {
+            "1988",
+            "1988",
+            "1988",
+            "2024",
+            "../../../etc/passwd",
+            "../..//../..//../..//../..//../..//../..//etc/passwd",
+            "../../../../../../etc/passwd",
+            "..\\..\\..\\..\\..\\..\\..\\etc\\passwd",
+            "..\\..//..\\..//..\\..//..\\..//..\\..//..\\etc\\passwd"
+        };
+
+        // Sanitize and print each reporting year
+        for (String year : reportingYears) {
+            String sanitizedYear = sanitizeFileName(year);
+            System.out.println("Original: " + year);
+            System.out.println("Sanitized: " + sanitizedYear);
+            System.out.println();
+        }
+    }
+}
