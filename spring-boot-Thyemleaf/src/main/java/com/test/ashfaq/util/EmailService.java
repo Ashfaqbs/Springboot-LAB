@@ -74,6 +74,61 @@ public class EmailService {
             e.printStackTrace();
         }
     }
+
+//need to set up an IMAP or POP3 client in your Spring Boot application in order to get mails
+// in application.prop
+// spring.mail.host=imap-mail.outlook.com
+// spring.mail.port=993
+// spring.mail.username=your-email@outlook.com
+// spring.mail.password=your-password
+// spring.mail.protocol=imap
+// spring.mail.properties.mail.imap.ssl.enable=true
+
+
+
+
+
+
+
+
+    --uppdated 
+
+     public void receiveEmails() {
+        try {
+            Store store = javaMailSender.getSession().getStore("imap");
+            store.connect("imap-mail.outlook.com", "your-email@outlook.com", "your-password");
+            Folder inbox = store.getFolder("INBOX");
+            inbox.open(Folder.READ_ONLY);
+
+            Message[] messages = inbox.getMessages();
+            for (Message message : messages) {
+                System.out.println("Message: " + message.getSubject());
+                if (message.isMimeType("multipart/*")) {
+                    Multipart multipart = (Multipart) message.getContent();
+                    for (int i = 0; i < multipart.getCount(); i++) {
+                        BodyPart bodyPart = multipart.getBodyPart(i);
+                        if (Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition())) {
+                            String fileName = bodyPart.getFileName();
+                            InputStream inputStream = bodyPart.getInputStream();
+                            FileOutputStream outputStream = new FileOutputStream(new File(fileName));
+                            byte[] buffer = new byte[4096];
+                            int bytesRead;
+                            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                                outputStream.write(buffer, 0, bytesRead);
+                            }
+                            outputStream.close();
+                            inputStream.close();
+                        }
+                    }
+                }
+            }
+
+            inbox.close(false);
+            store.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
 
 
