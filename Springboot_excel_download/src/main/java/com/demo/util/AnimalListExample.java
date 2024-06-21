@@ -124,6 +124,40 @@ public class AnimalListExample {
             headerCell.setCellStyle(headerStyle);
         }
 
+
+//border to heading
+ // // Create header row (9th row in Excel, which is index 8)
+ //        Row headerRow = sheet.createRow(8);
+ //        String[] headers = {"ID", "Name", "Type", "Description", "Habitat", "Lifespan"};
+ //        CellStyle headerStyle = workbook.createCellStyle();
+ //        XSSFColor lightBlue = new XSSFColor(new Color(173, 216, 230), null); // Light blue color
+ //        ((XSSFCellStyle) headerStyle).setFillForegroundColor(lightBlue);
+ //        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+ //        headerStyle.setBorderBottom(BorderStyle.THIN);
+ //        headerStyle.setBorderTop(BorderStyle.THIN);
+ //        headerStyle.setBorderRight(BorderStyle.THIN);
+ //        headerStyle.setBorderLeft(BorderStyle.THIN);
+
+ //        for (int i = 0; i < headers.length; i++) {
+ //            Cell headerCell = headerRow.createCell(i);
+ //            headerCell.setCellValue(headers[i]);
+ //            headerCell.setCellStyle(headerStyle);
+        // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
         // Fill data rows starting from the 10th row (index 9)
         int rowNum = 9;
         if (animalList.isEmpty()) {
