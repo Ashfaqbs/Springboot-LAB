@@ -1,0 +1,205 @@
+
+running from terminal  JAR
+
+1
+
+public class DataProcessingApp {
+
+    public static void main(String[] args) {
+        if (args.length < 1) {
+            System.out.println("Please provide the file path as a command-line argument.");
+            return;
+        }
+
+        String filePath = args[0]; // Get the file path from command-line argument
+
+        // Call the method that processes the .data file
+        processFile(filePath);
+    }
+
+    private static void processFile(String filePath) {
+        // Your logic to read and process the .data file goes here
+    }
+}
+
+// substring validate
+
+private boolean isValidData(String data) {
+    // Check for null or empty data
+    if (data == null || data.trim().isEmpty()) {
+        return false;
+    }
+    
+    // Check for special characters or unwanted characters
+    String allowedCharacters = "[a-zA-Z0-9]+"; // Adjust this regex as needed
+    return data.matches(allowedCharacters);
+}
+
+// Inside your processing method
+private void processLine(String line) {
+    String year = line.substring(37, 41);
+    String type = line.substring(794, 795);
+    
+    // Check if year and type are valid
+    if (!isValidData(year) || !isValidData(type)) {
+        throw new IllegalArgumentException("Invalid data found in the line: " + line);
+    }
+
+    // Continue with your processing logic
+    // ...
+}
+
+
+//input validate
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.CommandLineRunner;
+import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+@SpringBootApplication
+public class YourApplication implements CommandLineRunner {
+
+    public static void main(String[] args) {
+        SpringApplication.run(YourApplication.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        // Validate the number of arguments
+        if (args.length != 2) {
+            System.err.println("Usage: java -jar jarname.jar <old_data_file> <new_data_file>");
+            System.exit(1); // Exit with an error code
+        }
+        
+        String oldDataFilePath = args[0];
+        String newDataFilePath = args[1];
+        
+        // Extract date from file names
+        String oldDatePart = extractDateFromFileName(oldDataFilePath);
+        String newDatePart = extractDateFromFileName(newDataFilePath);
+        
+        if (oldDatePart == null || newDatePart == null) {
+            System.err.println("Invalid file name format. Files must be named as phts-snapshotdatemonthyear");
+            System.exit(1); // Exit with an error code
+        }
+        
+        // Validate file extensions
+        if (!oldDataFilePath.toLowerCase().endsWith(".data") ||
+            !newDataFilePath.toLowerCase().endsWith(".data")) {
+            System.err.println("Both files must be of .data format");
+            System.exit(1); // Exit with an error code
+        }
+        
+        // Validate if the old file is specified first and the new file second
+        File oldDataFile = new File(oldDataFilePath);
+        File newDataFile = new File(newDataFilePath);
+        if (!oldDataFile.exists() || !newDataFile.exists()) {
+            System.err.println("Both files must exist");
+            System.exit(1); // Exit with an error code
+        }
+        
+        // Perform your processing using oldDataFilePath and newDataFilePath
+        // ...
+    }
+    
+    private String extractDateFromFileName(String fileName) {
+        String[] parts = fileName.split("-");
+        if (parts.length != 3) {
+            return null;
+        }
+        
+        return parts[2];
+    }
+}
+
+
+
+2
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class YourApplication implements CommandLineRunner {
+
+    public static void main(String[] args) {
+        SpringApplication.run(YourApplication.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        if (args.length < 1) {
+            System.out.println("Please provide the file path as a command-line argument.");
+            return;
+        }
+
+        String filePath = args[0]; // Get the file path from command-line argument
+
+        // Call the method that processes the .data file
+        processFile(filePath);
+    }
+
+    private void processFile(String filePath) {
+        // Your logic to read and process the .data file goes here
+    }
+}
+
+@Override
+public void run(String... args) throws Exception {
+    if (args.length < 2) {
+        System.out.println("Please provide the paths of both files as command-line arguments.");
+        return;
+    }
+
+    String filePath1 = args[0]; // Get the first file path from command-line argument
+    String filePath2 = args[1]; // Get the second file path from command-line argument
+
+    // Call the method that processes the .data files
+    processFiles(filePath1, filePath2);
+}
+
+private void processFiles(String filePath1, String filePath2) {
+    // Your logic to read and process the .data files goes here
+}
+
+java -jar your-application.jar /path/to/your/file.data
+java -jar your-application.jar /path/to/first/file.data /path/to/second/file.data
+
+
+3
+    @SpringBootApplication
+    public class MyApplication {
+        public static void main(String[] args) {
+            for(String arg:args) {
+                System.out.println(arg);
+            }
+            SpringApplication.run(MyApplication.class, args);
+        }
+    }
+    ```
+java -jar myapp.jar --file.name=myfile.txt
+
+
+3
+
+// logger 
+try {
+    // Your code that may throw an exception
+} catch (Exception e) {
+    // Log the exception details with context information
+    logger.error("An error occurred in {} at line {}:", YourClassName.class.getName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), e);
+}
+
+
+or
+try {
+    // Your code that may throw an exception
+} catch (Exception e) {
+    String className = YourClassName.class.getName();
+    int lineNumber = Thread.currentThread().getStackTrace()[1].getLineNumber();
+    String errorMessage = "An error occurred in " + className + " at line " + lineNumber + ": " + e.getMessage();
+    logger.error(errorMessage, e);
+}
