@@ -1,0 +1,93 @@
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.util.StringUtils;
+
+import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
+
+@Configuration
+public class AppConfig {
+
+    @Autowired
+    private Environment env;
+
+    @Autowired
+    private JavaMailSender mailSender;
+
+    @Bean
+    public CommandLineRunner testDatabaseConnections() {
+        return args -> {
+            List<DataSource> dataSources = getDataSources();
+
+            for (int i = 0; i < dataSources.size(); i++) {
+                try {
+                    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSources.get(i));
+                    String testQuery = getTestQuery(i);
+                    jdbcTemplate.execute(testQuery);
+                    System.out.println("Database connection " + (i + 1) + " is OK.");
+                } catch (Exception e) {
+                    System.out.println("Database connection " + (i + 1) + " failed.");
+                    sendErrorEmail("Connection " + (i + 1), e.getMessage());
+                }
+            }
+        };
+    }
+
+    private List<DataSource> getDataSources() {
+        List<DataSource> dataSources = new ArrayList<>();
+        int i = 0;
+        while (true) {
+            String url = env.getProperty("db.connections[" + i + "].url");
+            if (!StringUtils.hasText(url)) {
+                break;
+            }
+            String username = env.getProperty("db.connections[" + i + "].username");
+            String password = env.getProperty("db.connections[" + i + "].password");
+            String driverClassName = env.getProperty("db.connections[" + i + "].driver-class-name");
+
+            DriverManagerDataSource dataSource = new DriverManagerDataSource();
+            dataSource.setUrl(url);
+            dataSource.setUsername(username);
+            dataSource.setPassword(password);
+            dataSource.setDriverClassName(driverClassName);
+
+            dataSources.add(dataSource);
+            i++;
+        }
+        return dataSources;
+    }
+
+    private String getTestQuery(int index) {
+        String dbType = env.getProperty("db.connections[" + index + "].type");
+        switch (dbType.toLowerCase()) {
+            case "mysql":
+                return "SELECT 1";
+            case "postgres":
+                return "SELECT 1";
+            case "oracle":
+                return "SELECT 1 FROM DUAL";
+            // Add more cases for different databases as needed
+            default:
+                throw new IllegalArgumentException("Unsupported database type: " + dbType);
+        }
+    }
+
+    private void sendErrorEmail(String connectionId, String errorMessage) {
+        String to = env.getProperty("app.db.connection.error-email");
+        String from = env.getProperty("spring.mail.username");
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setFrom(from);
+        message.setSubject("Database Connection Error: " + connectionId);
+        message.setText("An error occurred while trying to connect to the database " + connectionId + ":\n\n" + errorMessage);
+        mailSender.send(message);
+    }
+}
