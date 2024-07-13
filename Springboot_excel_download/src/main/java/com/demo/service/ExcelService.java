@@ -1,16 +1,22 @@
 package com.example.excelupload.service;
 
-import org.apache.poi.ss.usermodel.*;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.InputStream;
 
 @Service
 public class ExcelService {
 
 
-   public List<Employee> readExcel(MultipartFile file) throws Exception {
+   public List<Employee> readExcel2(MultipartFile file) throws Exception {
         List<Employee> employees = new ArrayList<>();
 
         try (InputStream inputStream = file.getInputStream()) {

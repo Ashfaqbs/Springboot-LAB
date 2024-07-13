@@ -1,3 +1,4 @@
+package com.demo.util;
 
 public class Animal {
     private int id;

@@ -1,4 +1,4 @@
-package com.ashfaq.dev.ai;
+package com.ashfaq.dev.snips.Util;
 
 public class Record {
     private int primaryKey;
