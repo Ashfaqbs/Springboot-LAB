@@ -14,7 +14,7 @@ public class WebConfig implements WebMvcConfigurer { // no required to implement
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                   registry.addMapping("/**")  // Apply CORS settings to all paths
-                        .allowedOrigins("http://my-frontend-domain.com")  // Replace with frontend domain
+                        .allowedOrigins("http://my-frontend-domain.com")  // Replace with frontend domain, provide domain in list way "URL1 ,URL2" and avoid *
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")  // HTTP methods allowed
                         .allowedHeaders("*")  // Allow all headers
                         // .allowCredentials(true)  // Allow credentials like cookies and authorization headers if we provide this we cant provide multiple origin
