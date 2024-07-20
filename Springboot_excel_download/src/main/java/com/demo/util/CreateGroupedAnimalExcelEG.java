@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -26,6 +29,23 @@ import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class CreateGroupedAnimalExcelEG {
+	
+	public static void addImageToSheet(Workbook workbook, Sheet sheet, String imagePath, int col1, int row1, int col2, int row2) throws IOException {
+        try (InputStream inputStream = new FileInputStream(imagePath)) {
+            byte[] bytes = IOUtils.toByteArray(inputStream);
+            int pictureIdx = workbook.addPicture(bytes, Workbook.PICTURE_TYPE_PNG);
+
+            Drawing<?> drawing = sheet.createDrawingPatriarch();
+            ClientAnchor anchor = workbook.getCreationHelper().createClientAnchor();
+            anchor.setCol1(col1);
+            anchor.setRow1(row1);
+            anchor.setCol2(col2);
+            anchor.setRow2(row2);
+            anchor.setAnchorType(ClientAnchor.AnchorType.DONT_MOVE_AND_RESIZE);
+
+            drawing.createPicture(anchor, pictureIdx);
+        }
+    }
     public static void main(String[] args) throws IOException {
         // Define your Animal class and animalList here (not shown for brevity)
         List<Animal> animalList = new ArrayList<>();
