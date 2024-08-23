@@ -1,4 +1,4 @@
-package com.ashfaq.dev.libref.JSON;
+package com.ashfaq.dev.libs.gjson;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

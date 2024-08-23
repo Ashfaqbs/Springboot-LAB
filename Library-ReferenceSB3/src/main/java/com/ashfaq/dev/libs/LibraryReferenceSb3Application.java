@@ -1,4 +1,4 @@
-package com.ashfaq.dev.libref;
+package com.ashfaq.dev.libs;
 
 import java.io.IOException;
 
