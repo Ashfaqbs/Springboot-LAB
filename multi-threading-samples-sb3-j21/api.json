@@ -1,0 +1,136 @@
+localhost:8080/api/products/mass-update
+
+
+[
+    {
+        "id": 1,
+        "name": "Laptop",
+        "price": 1500.50,
+        "description": "High-performance laptop"
+    },
+    {
+        "id": 2,
+        "name": "Smartphone",
+        "price": null,
+        "description": "Latest model smartphone"
+    },
+    {
+        "id": 3,
+        "name": null,
+        "price": 299.99,
+        "description": "Noise-cancelling headphones"
+    },
+    {
+        "id": 4,
+        "name": "Smartwatch",
+        "price": 199.99,
+        "description": null
+    },
+    {
+        "id": 5,
+        "name": null,
+        "price": 50.0,
+        "description": "Wireless mouse"
+    },
+    {
+        "id": 6,
+        "name": "Mechanical Keyboard",
+        "price": null,
+        "description": null
+    },
+    {
+        "id": 7,
+        "name": "Gaming Chair",
+        "price": 250.00,
+        "description": "Ergonomic gaming chair"
+    },
+    {
+        "id": 8,
+        "name": null,
+        "price": 75.99,
+        "description": "Bluetooth speaker"
+    },
+    {
+        "id": 9,
+        "name": "Monitor",
+        "price": 300.49,
+        "description": null
+    },
+    {
+        "id": 10,
+        "name": "Tablet",
+        "price": 450.00,
+        "description": "High-resolution tablet"
+    }
+]
+
+
+localhost:8080/api/products/mass-update3
+
+[
+    {
+        "id": 1,
+        "name": "Laptop",
+        "price": 1500.50,
+        "description": "High-performance laptop"
+    },
+    {
+        "id": 2,
+        "name": "Smartphone",
+        "price": null,
+        "description": "Latest model smartphone"
+    },
+    {
+        "id": 3,
+        "name": null,
+        "price": 299.99,
+        "description": "Noise-cancelling headphones"
+    },
+    {
+        "id": 4,
+        "name": "Smartwatch",
+        "price": 199.99,
+        "description": null
+    },
+    {
+        "id": 5,
+        "name": null,
+        "price": 50.0,
+        "description": "Wireless mouse"
+    },
+    {
+        "id": 6,
+        "name": "Mechanical Keyboard",
+        "price": null,
+        "description": null
+    },
+    {
+        "id": 7,
+        "name": "Gaming Chair",
+        "price": 250.00,
+        "description": "Ergonomic gaming chair"
+    },
+    {
+        "id": 8,
+        "name": null,
+        "price": 75.99,
+        "description": "Bluetooth speaker"
+    },
+    {
+        "id": 9,
+        "name": "Monitor",
+        "price": 300.49,
+        "description": null
+    },
+    {
+        "id": 90,
+        "name": "Tablet",
+        "price": 450.00,
+        "description": "High-resolution tablet"
+    }
+]
+
+
+localhost:8080/api/products/mass-update4
+attach file 
+
