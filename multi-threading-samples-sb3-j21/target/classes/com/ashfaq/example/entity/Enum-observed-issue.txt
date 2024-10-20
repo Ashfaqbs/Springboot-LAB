@@ -1,0 +1,38 @@
+When we changed from string 
+//	private String status; // e.g., "In Progress", "Success", "Semi-success", "Failed"
+to enum i.e  private UploadStatus status public enum 
+UploadStatus {
+	IN_PROGRESS, SUCCESS, SEMI_SUCCESS, FAILED
+}
+for Using Enums instead of String as  good practice because enums provide type safety and allow you to define a fixed set of values for a field, preventing invalid values from being stored.
+
+
+//	how to set :
+//	uploadTask.setStatus(UploadStatus.IN_PROGRESS);
+
+we saw error while starting up  : 
+
+Hibernate: select ut1_0.id,ut1_0.action,ut1_0.product_count,ut1_0.status,ut1_0.transaction_id,ut1_0.upload_date from upload_task ut1_0
+2024-10-20 12:17:00 INFO  [main] o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2024-10-20 12:17:00 ERROR [main] o.s.boot.SpringApplication - Application run failed
+org.springframework.dao.InvalidDataAccessApiUsageException: No enum constant com.ashfaq.example.entity.UploadStatus.Success
+	at org.springframework.orm.jpa.EntityManagerFactoryUtils.convertJpaAccessExceptionIfPossible(EntityManagerFactoryUtils.java:371)
+	
+	
+as in db the status was  Success ,Semi-success and this was not matching to our new Enums so
+
+we updated all the status in our db to match the enums
+UPDATE springbootdev.upload_task SET status = 'SUCCESS' WHERE status = 'success';  -- Adjust based on your case
+UPDATE springbootdev.upload_task SET status = 'SEMI_SUCCESS' WHERE status = 'Semi-success';  -- Adjust based on your case
+
+commit;
+	
+and for confirmation we added @Column(name = "status") on our enum UploadStatus variable
+
+
+@Enumerated(EnumType.STRING)
+	@Column(name = "status")
+	private UploadStatus status;	
+and post app started up with no issues.
