@@ -154,6 +154,83 @@ public CompletableFuture<List<Boolean>> updateProductsWithCompletableFuture(List
 
 ---
 
+
+
+
+
+## For the second function that updates the product but **does not return a value**, we are right—`Future` isn't ideal because it expects some kind of return type. However, **`CompletableFuture`** is more flexible because it can handle both return types and `void` operations.
+
+Let’s focus on how to run it asynchronously without returning any value.
+
+---
+
+### **Using `CompletableFuture<Void>` for Asynchronous Operations Without a Return Value:**
+
+In this scenario, we want to perform some operation (updating the product) without needing to return anything. We can use `CompletableFuture.runAsync()` for this, which is ideal for running tasks asynchronously when there’s no return value.
+
+Here’s how we can implement it:
+
+```java
+import java.util.concurrent.CompletableFuture;
+import java.util.List;
+
+public class ProductUpdater {
+
+    // This function updates products without returning a value
+    public void updateProductWithoutReturn(Product product) {
+        validateProduct(product);
+        updateNonNullFields(product);
+        saveProduct(product);
+    }
+
+    // Method to asynchronously process a list of products without returning any value
+    public CompletableFuture<Void> updateProductsWithoutReturnAsync(List<Product> products) {
+        List<CompletableFuture<Void>> futures = products.stream()
+            .map(product -> CompletableFuture.runAsync(() -> updateProductWithoutReturn(product)))
+            .toList();
+
+        // Using CompletableFuture.allOf to wait for all tasks to finish
+        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+    }
+
+    // Helper methods (same as in your original function)
+    private void validateProduct(Product product) {
+        // Validation logic
+    }
+
+    private void updateNonNullFields(Product product) {
+        // Only update fields that are non-null
+    }
+
+    private void saveProduct(Product product) {
+        // Save to database
+    }
+}
+```
+
+### **Explanation:**
+
+1. **`CompletableFuture.runAsync()`**:
+   - This is used when we don’t expect a result. It will run the `updateProductWithoutReturn()` function asynchronously on a separate thread, without blocking the main thread.
+   - Since we are dealing with a `void` operation, `runAsync()` is a better fit than `supplyAsync()`, which is used for returning values.
+
+2. **`CompletableFuture.allOf()`**:
+   - It waits for all the `CompletableFuture` tasks to finish.
+   - We are passing an array of `CompletableFuture<Void>`, and it will complete only when all product update tasks are done.
+
+3. **Asynchronous Behavior**:
+   - The updates happen in parallel without waiting for each other.
+   - The main thread won’t be blocked while the updates are processed in the background.
+
+### **Why Not Use `Future`?**
+- `Future` expects a return type, so if your function doesn’t return a value (`void`), you’d have to return something unnecessary, like `Boolean.TRUE`, just to make it work, which is not efficient.
+- `CompletableFuture` is more flexible and allows for both returnable and non-returnable tasks.
+
+### **Key Points**:
+- **Non-blocking**: The operation runs in the background, and the main thread continues execution without waiting.
+- **Parallelism**: If we pass a list of products, each update happens on a separate thread concurrently.
+
+This approach ensures that the product updates run asynchronously, and we don't need to return any value from the function. Let me know if this works for your use case!
 ### **Which to Use?**
 - **Use `Future`** if we are fine with blocking behavior and don't mind sequential result collection after all the tasks are done. It’s simpler but can slow down the system in I/O-intensive or long-running operations.
   
