@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -558,6 +559,149 @@ public class ProductController {
 
 	}
 
+
+
+
+
+	@PostMapping("/mass-update5")
+	public ResponseEntity<Map<String, Object>> massUpdateWithCompletableFuture(@RequestParam MultipartFile file) {
+
+		int availableCores = Runtime.getRuntime().availableProcessors();
+		ExecutorService executor = Executors.newFixedThreadPool(availableCores - 2);
+
+		// Step 1: Validate the file format
+		if (!file.getOriginalFilename().endsWith(".xlsx")) {
+			return ResponseEntity.badRequest().body(
+					Collections.singletonMap("status", "Invalid file format. Please upload an Excel (.xlsx) file."));
+		}
+
+		// Step 2: Read the Excel file using Apache POI
+		XSSFWorkbook workbook = null;
+		try {
+			workbook = new XSSFWorkbook(file.getInputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		XSSFSheet sheet = workbook.getSheetAt(0);
+
+		// Step 3: Validate headers
+		Row headerRow = sheet.getRow(0);
+		if (!validateHeaders(headerRow)) {
+			return ResponseEntity.badRequest()
+					.body(Collections.singletonMap("status", "Invalid headers in the Excel file."));
+		}
+
+		// Step 4: Convert valid Excel rows to List of Products
+		List<Product> products = new ArrayList<>();
+		for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+			Row row = sheet.getRow(i);
+			Product product = convertRowToProduct(row);
+			products.add(product);
+		}
+		try {
+			workbook.close();
+		} catch (IOException e) {
+			logger.error("Error :{}", e);
+			e.printStackTrace();
+		}
+
+		logger.info("Mass update initiated with {} products", products.size());
+
+		// Step 1: Create the task in the UploadTask table
+		UploadTask uploadTask = new UploadTask();
+		uploadTask.setProductCount(products.size());
+		uploadTask.setUploadDate(LocalDateTime.now());
+		uploadTask.setAction("mass-update");
+		uploadTask.setStatus(UploadStatus.IN_PROGRESS);
+		uploadTask = uploadTaskRepository.save(uploadTask); // Save the task and get the ID
+		Long taskId = uploadTask.getId(); // Save the task's ID for future use
+
+		// Step 2: Create a ConcurrentHashMap to track update status for each product
+		Map<Long, String> productUpdateStatus = new ConcurrentHashMap<>();
+
+		AtomicInteger successCount = new AtomicInteger(0);
+		AtomicInteger failCount = new AtomicInteger(0);
+
+		// Step 3: Process each product asynchronously using CompletableFuture
+		List<CompletableFuture<Void>> futures = products.stream().map(product -> CompletableFuture.supplyAsync(() -> {
+			Optional<Product> existingProduct = productService.getProductById(product.getId());
+			UploadItemStatus itemStatus = new UploadItemStatus();
+			itemStatus.setProductId(product.getId());
+			itemStatus.setUploadTaskId(taskId); // Link using taskId (int)
+
+			if (!existingProduct.isPresent()) {
+				productUpdateStatus.put(product.getId(), "Product not found");
+				failCount.incrementAndGet();
+				itemStatus.setStatus("Failed");
+				itemStatus.setComment("Product not found");
+				uploadItemStatusRepository.save(itemStatus); // Track individual status
+				return null;
+			}
+
+			// Update logic
+			Product updatedProduct = existingProduct.get();
+			if (product.getName() != null) {
+				updatedProduct.setName(product.getName().trim());
+			}
+			if (product.getPrice() != null && product.getPrice() > 0) {
+				updatedProduct.setPrice(product.getPrice());
+			}
+			if (product.getDescription() != null) {
+				updatedProduct.setDescription(product.getDescription().trim());
+			}
+
+			Product savedProduct = productService.saveProduct(updatedProduct);
+			productUpdateStatus.put(product.getId(), "Success");
+			successCount.incrementAndGet();
+
+			itemStatus.setStatus("Success");
+			itemStatus.setComment("Updated successfully");
+			uploadItemStatusRepository.save(itemStatus); // Track individual status
+
+			return savedProduct;
+		}, executor).thenAccept(savedProduct -> {
+			// You can perform any other action here if needed
+		}).exceptionally(ex -> {
+			failCount.incrementAndGet(); // Track failed tasks
+			return null;
+		})).collect(Collectors.toList());
+
+		// Wait for all tasks to complete
+		CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+		allOf.join(); // Wait for all tasks to complete
+
+		// Determine final task status
+		UploadStatus taskStatus;
+		if (successCount.get() == products.size()) {
+			taskStatus = UploadStatus.SUCCESS;
+		} else if (failCount.get() == products.size()) {
+			taskStatus = UploadStatus.FAILED;
+		} else {
+			taskStatus = UploadStatus.SEMI_SUCCESS;
+		}
+
+		uploadTask.setStatus(taskStatus);
+		uploadTaskRepository.save(uploadTask); // Update the task status in the DB
+
+		// Step 6: Build response
+		Map<String, Object> response = new HashMap<>();
+		response.put("productUpdateStatus", productUpdateStatus); // Status for each product
+		response.put("taskStatus", taskStatus); // Final task status
+		response.put("uploadTaskId", uploadTask.getId()); // Task ID for tracking
+
+		executor.shutdown();
+
+		return ResponseEntity.ok(response);
+	}
+
+
+
+
+
+
+
+	
 //	private Product convertRowToProduct(Row row) {
 //		Product product = new Product();
 //
