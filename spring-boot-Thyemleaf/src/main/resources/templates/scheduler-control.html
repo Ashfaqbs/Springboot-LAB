@@ -1,0 +1,266 @@
+<!-- <!DOCTYPE html> -->
+<!-- <html xmlns:th="http://www.thymeleaf.org"> -->
+<!-- <head> -->
+<!--     <title>Scheduler Control</title> -->
+<!-- </head> -->
+<!-- <body> -->
+<!--     <h1>Scheduler Control</h1> -->
+<!--     <form th:action="@{/toggle-scheduler}" method="post"> -->
+<!--         <p>Scheduler is currently: -->
+<!--             <span th:text="${schedulerEnabled ? 'ON' : 'OFF'}"></span> -->
+<!--         </p> -->
+<!--         <button type="submit">Toggle Scheduler</button> -->
+<!--     </form> -->
+<!-- </body> -->
+<!-- </html> -->
+<!-- <!DOCTYPE html> -->
+<!-- <html xmlns:th="http://www.thymeleaf.org"> -->
+<!-- <head> -->
+<!--     <title>Job Scheduler Control</title> -->
+<!-- </head> -->
+<!-- <body> -->
+<!--     <h1>Job Scheduler Control</h1> -->
+
+<!--     <div> -->
+<!--         <h2>Job 1</h2> -->
+<!--         <p>Status: <span th:text="${job1Enabled ? 'Running' : 'Stopped'}"></span></p> -->
+<!--         <form th:action="@{/toggle-job1}" method="post"> -->
+<!--             <button type="submit" th:text="${job1Enabled ? 'Stop Job 1' : 'Start Job 1'}"></button> -->
+<!--         </form> -->
+<!--     </div> -->
+
+<!--     <div> -->
+<!--         <h2>Job 2</h2> -->
+<!--         <p>Status: <span th:text="${job2Enabled ? 'Running' : 'Stopped'}"></span></p> -->
+<!--         <form th:action="@{/toggle-job2}" method="post"> -->
+<!--             <button type="submit" th:text="${job2Enabled ? 'Stop Job 2' : 'Start Job 2'}"></button> -->
+<!--         </form> -->
+<!--     </div> -->
+<!-- </body> -->
+<!-- </html> -->
+
+
+
+<!-- <!DOCTYPE html> -->
+<!-- <html xmlns:th="http://www.thymeleaf.org"> -->
+<!-- <head> -->
+<!--     <title>Job Scheduler Control</title> -->
+<!--     <style> -->
+<!-- /*         /* Background styling */ */ -->
+<!-- /*         body { */ -->
+<!-- /*             font-family: Arial, sans-serif; */ -->
+<!-- /*             background: linear-gradient(135deg, #1c1e22, #3e4b61); */ -->
+<!-- /*             color: #ffffff; */ -->
+<!-- /*             display: flex; */ -->
+<!-- /*             justify-content: center; */ -->
+<!-- /*             align-items: center; */ -->
+<!-- /*             height: 100vh; */ -->
+<!-- /*             margin: 0; */ -->
+<!-- /*         } */ -->
+
+<!-- /*         /* Container and heading */ */ -->
+<!-- /*         .container { */ -->
+<!-- /*             text-align: center; */ -->
+<!-- /*             width: 90%; */ -->
+<!-- /*             max-width: 600px; */ -->
+<!-- /*             padding: 20px; */ -->
+<!-- /*         } */ -->
+        
+<!-- /*         h1 { */ -->
+<!-- /*             font-size: 2em; */ -->
+<!-- /*             margin-bottom: 1.5em; */ -->
+<!-- /*             letter-spacing: 1px; */ -->
+<!-- /*             color: #00c8ff; */ -->
+<!-- /*         } */ -->
+
+<!-- /*         /* Job control cards */ */ -->
+<!-- /*         .job-card { */ -->
+<!-- /*             background: #2a2e36; */ -->
+<!-- /*             padding: 20px; */ -->
+<!-- /*             margin: 1em 0; */ -->
+<!-- /*             border-radius: 8px; */ -->
+<!-- /*             box-shadow: 0 8px 12px rgba(0, 0, 0, 0.4); */ -->
+<!-- /*         } */ -->
+
+<!-- /*         .job-card h2 { */ -->
+<!-- /*             font-size: 1.5em; */ -->
+<!-- /*             color: #ffdd57; */ -->
+<!-- /*             margin-bottom: 0.5em; */ -->
+<!-- /*         } */ -->
+
+<!-- /*         /* Status text */ */ -->
+<!-- /*         .status { */ -->
+<!-- /*             font-size: 1.2em; */ -->
+<!-- /*             color: #00ffae; */ -->
+<!-- /*             margin-bottom: 1em; */ -->
+<!-- /*             display: inline-block; */ -->
+<!-- /*             padding: 5px 10px; */ -->
+<!-- /*             border-radius: 5px; */ -->
+<!-- /*             background: #202329; */ -->
+<!-- /*         } */ -->
+
+<!-- /*         /* Button styling */ */ -->
+<!-- /*         button { */ -->
+<!-- /*             background: #00c8ff; */ -->
+<!-- /*             color: #ffffff; */ -->
+<!-- /*             border: none; */ -->
+<!-- /*             padding: 10px 20px; */ -->
+<!-- /*             font-size: 1em; */ -->
+<!-- /*             font-weight: bold; */ -->
+<!-- /*             border-radius: 8px; */ -->
+<!-- /*             cursor: pointer; */ -->
+<!-- /*             transition: background 0.3s ease, transform 0.3s ease; */ -->
+<!-- /*         } */ -->
+
+<!-- /*         button:hover { */ -->
+<!-- /*             background: #ff3d71; */ -->
+<!-- /*             transform: translateY(-3px); */ -->
+<!-- /*         } */ -->
+
+<!-- /*         button:focus { */ -->
+<!-- /*             outline: none; */ -->
+<!-- /*         } */ -->
+<!--     </style> -->
+<!-- </head> -->
+<!-- <body> -->
+<!--     <div class="container"> -->
+<!--         <h1>Job Scheduler Control</h1> -->
+
+<!--         Job 1 Card -->
+<!--         <div class="job-card"> -->
+<!--             <h2>Job 1</h2> -->
+<!--             <p class="status">Status: <span th:text="${job1Enabled ? 'Running' : 'Stopped'}"></span></p> -->
+<!--             <form th:action="@{/toggle-job1}" method="post"> -->
+<!--                 <button type="submit" th:text="${job1Enabled ? 'Stop Job 1' : 'Start Job 1'}"></button> -->
+<!--             </form> -->
+<!--         </div> -->
+
+<!--         Job 2 Card -->
+<!--         <div class="job-card"> -->
+<!--             <h2>Job 2</h2> -->
+<!--             <p class="status">Status: <span th:text="${job2Enabled ? 'Running' : 'Stopped'}"></span></p> -->
+<!--             <form th:action="@{/toggle-job2}" method="post"> -->
+<!--                 <button type="submit" th:text="${job2Enabled ? 'Stop Job 2' : 'Start Job 2'}"></button> -->
+<!--             </form> -->
+<!--         </div> -->
+<!--     </div> -->
+<!-- </body> -->
+<!-- </html> -->
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Job Scheduler Control</title>
+    <style>
+        /* Background styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Container and heading */
+        .container {
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 1.8em;
+            margin-bottom: 1.2em;
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* Job control cards */
+        .job-card {
+            background: #ffffff;
+            padding: 20px;
+            margin: 1em 0;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .job-card h2 {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 0.8em;
+        }
+
+        /* Status text */
+        .status {
+            font-size: 1em;
+            color: #4CAF50;
+            font-weight: 600;
+            margin-bottom: 1em;
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 5px;
+            background: #f0f9f1;
+        }
+
+        .status.stopped {
+            color: #f44336;
+            background: #fdecec;
+        }
+
+        /* Button styling */
+        button {
+            background: #007bff;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        button:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Job Scheduler Control</h1>
+
+        <!-- Job 1 Card -->
+        <div class="job-card">
+            <h2>Job 1</h2>
+            <p class="status" th:classappend="${job1Enabled ? '' : 'stopped'}">
+                Status: <span th:text="${job1Enabled ? 'Running' : 'Stopped'}"></span>
+            </p>
+            <form th:action="@{/toggle-job1}" method="post">
+                <button type="submit" th:text="${job1Enabled ? 'Stop Job 1' : 'Start Job 1'}"></button>
+            </form>
+        </div>
+
+        <!-- Job 2 Card -->
+        <div class="job-card">
+            <h2>Job 2</h2>
+            <p class="status" th:classappend="${job2Enabled ? '' : 'stopped'}">
+                Status: <span th:text="${job2Enabled ? 'Running' : 'Stopped'}"></span>
+            </p>
+            <form th:action="@{/toggle-job2}" method="post">
+                <button type="submit" th:text="${job2Enabled ? 'Stop Job 2' : 'Start Job 2'}"></button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+
