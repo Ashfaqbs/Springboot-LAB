@@ -1,3 +1,7 @@
+## Curl Process Caller 
+
+
+```
 String command = "curl -X GET https://postman-echo.com/get?foo1=bar1&foo2=bar2";
 ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
 processBuilder.directory(new File("/home/"));
@@ -8,10 +12,10 @@ int exitCode = process.exitValue();
 
 processBuilder.command(new String[]{"curl", "-X", "GET", "https://postman-echo.com?foo=bar"});
 process.destroy();
+```
 
 
-
----
+``````
 Process process = Runtime.getRuntime().exec(command);
 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 String line;
@@ -20,10 +24,11 @@ while ((line = reader.readLine()) != null) {
 }
 reader.close();
 process.destroy();
+``````
 
 
 
-------
+```
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -77,3 +82,4 @@ public class YourClass {
 
     // ...
 }
+```

@@ -5,7 +5,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.ashfaq.example.repository.UploadTaskRepository;
+import src.main.java.com.ashfaq.example.repository.UploadTaskRepository;
 
 @SpringBootApplication
 public class Sb3J21DbDockerDemoApplication implements CommandLineRunner {

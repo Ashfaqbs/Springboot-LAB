@@ -22,6 +22,7 @@ public class DataProcessingApp {
     }
 }
 
+
 // substring validate
 
 private boolean isValidData(String data) {
@@ -34,6 +35,8 @@ private boolean isValidData(String data) {
     String allowedCharacters = "[a-zA-Z0-9]+"; // Adjust this regex as needed
     return data.matches(allowedCharacters);
 }
+
+
 
 // Inside your processing method
 private void processLine(String line) {
@@ -48,6 +51,8 @@ private void processLine(String line) {
     // Continue with your processing logic
     // ...
 }
+
+
 
 
 //input validate
@@ -161,12 +166,19 @@ public void run(String... args) throws Exception {
     processFiles(filePath1, filePath2);
 }
 
+
+
 private void processFiles(String filePath1, String filePath2) {
     // Your logic to read and process the .data files goes here
 }
 
+
+
 java -jar your-application.jar /path/to/your/file.data
 java -jar your-application.jar /path/to/first/file.data /path/to/second/file.data
+
+
+
 
 
 3
@@ -181,6 +193,9 @@ java -jar your-application.jar /path/to/first/file.data /path/to/second/file.dat
     }
     ```
 java -jar myapp.jar --file.name=myfile.txt
+
+
+
 
 
 3
@@ -203,3 +218,5 @@ try {
     String errorMessage = "An error occurred in " + className + " at line " + lineNumber + ": " + e.getMessage();
     logger.error(errorMessage, e);
 }
+
+
