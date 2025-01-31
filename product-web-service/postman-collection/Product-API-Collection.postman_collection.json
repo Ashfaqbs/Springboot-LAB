@@ -1,0 +1,247 @@
+{
+	"info": {
+		"_postman_id": "47c8b4f6-b852-498a-b7db-129940a81d30",
+		"name": "Product-API-Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23143768"
+	},
+	"item": [
+		{
+			"name": "Products API Endpoints Overview Copy",
+			"item": [
+				{
+					"name": "Find products by model, brand, and store",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/products/search?model=MacBook Pro M3&brandName=Apple&physicalStore=San Francisco",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"products",
+								"search"
+							],
+							"query": [
+								{
+									"key": "model",
+									"value": "MacBook Pro M3"
+								},
+								{
+									"key": "brandName",
+									"value": "Apple"
+								},
+								{
+									"key": "physicalStore",
+									"value": "San Francisco"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find products by store and category",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/products/store/San Francisco/category/Laptop",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"products",
+								"store",
+								"San Francisco",
+								"category",
+								"Laptop"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find products by brand name",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/products/brand/Apple",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"products",
+								"brand",
+								"Apple"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find products by category",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/products/category/Laptop",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"products",
+								"category",
+								"Laptop"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve all products",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/products",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Save a new product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var template = `\r",
+									"<style type=\"text/css\">\r",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
+									"    .tftable tr {background-color:#ffffff;}\r",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
+									"    .tftable tr:hover {background-color:#e0ffff;}\r",
+									"</style>\r",
+									"\r",
+									"<table class=\"tftable\" border=\"1\">\r",
+									"    <tr>\r",
+									"        <th>Timestamp</th>\r",
+									"        <th>Status</th>\r",
+									"        <th>Error</th>\r",
+									"        <th>Trace</th>\r",
+									"        <th>Message</th>\r",
+									"        <th>Path</th>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>{{response.timestamp}}</td>\r",
+									"        <td>{{response.status}}</td>\r",
+									"        <td>{{response.error}}</td>\r",
+									"        <td>{{response.trace}}</td>\r",
+									"        <td>{{response.message}}</td>\r",
+									"        <td>{{response.path}}</td>\r",
+									"    </tr>\r",
+									"</table>\r",
+									"`;\r",
+									"\r",
+									"function constructVisualizerPayload() {\r",
+									"    var res = pm.response.json();\r",
+									"    return { response: res }\r",
+									"}\r",
+									"\r",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data;boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "product",
+									"value": "{\n  \"model\": \"Galaxy Tab S9 Ultra\",\n  \"productCategory\": \"Tablet\",\n  \"brandName\": \"Samsung\",\n  \"physicalStore\": \"London\",\n  \"description\": {\n    \"details\": \"Samsung's latest premium tablet with Snapdragon 8 Gen 2 processor.\",\n    \"companySite\": \"https://www.samsung.com\",\n    \"email\": \"support@samsung.com\",\n    \"supportLocation\": \"Global\"\n  }\n}\n",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/tmp/product-web-service/data/file_example_JPG_100kB.jpg"
+								},
+								{
+									"key": "video",
+									"type": "file",
+									"src": "/C:/tmp/product-web-service/data/SampleVideo_1280x720_1mb.mp4"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/products",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

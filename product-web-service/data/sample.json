@@ -1,0 +1,87 @@
+{
+    "model": "iPhone 15 Pro Max",
+    "productCategory": "Smartphone",
+    "brandName": "Apple",
+    "physicalStore": "New York",
+    "description": {
+      "details": "iPhone 15 Pro Max with A17 Pro chip and 48MP camera.",
+      "companySite": "https://www.apple.com",
+      "email": "support@apple.com",
+      "supportLocation": "Global"
+    }
+  }
+
+  
+
+  {
+    "model": "MacBook Pro M3",
+    "productCategory": "Laptop",
+    "brandName": "Apple",
+    "physicalStore": "San Francisco",
+    "description": {
+      "details": "Apple MacBook Pro with M3 chip and Liquid Retina display.",
+      "companySite": "https://www.apple.com/macbook-pro",
+      "email": "support@apple.com",
+      "supportLocation": "Global"
+    }
+  }
+
+  
+
+  {
+    "model": "Galaxy Tab S9 Ultra",
+    "productCategory": "Tablet",
+    "brandName": "Samsung",
+    "physicalStore": "London",
+    "description": {
+      "details": "Samsung's latest premium tablet with Snapdragon 8 Gen 2 processor.",
+      "companySite": "https://www.samsung.com",
+      "email": "support@samsung.com",
+      "supportLocation": "Global"
+    }
+  }
+
+  
+
+  {
+    "model": "WH-1000XM5",
+    "productCategory": "Headphones",
+    "brandName": "Sony",
+    "physicalStore": "Tokyo",
+    "description": {
+      "details": "Sony's industry-leading noise cancellation headphones.",
+      "companySite": "https://www.sony.com",
+      "email": "support@sony.com",
+      "supportLocation": "Japan, USA, Europe"
+    }
+  }
+  
+
+
+
+  {
+    "model": "XPS 15",
+    "productCategory": "Laptop",
+    "brandName": "Dell",
+    "physicalStore": "Chicago",
+    "description": {
+      "details": "Dell's flagship XPS laptop with Intel i9 processor and OLED display.",
+      "companySite": "https://www.dell.com",
+      "email": "support@dell.com",
+      "supportLocation": "Global"
+    }
+  }
+
+  {
+    "model": "ROG Strix RTX 4090",
+    "productCategory": "Graphics Card",
+    "brandName": "Asus",
+    "physicalStore": "Los Angeles",
+    "description": {
+      "details": "Asus ROG Strix RTX 4090 graphics card for high-performance gaming.",
+      "companySite": "https://www.asus.com",
+      "email": "support@asus.com",
+      "supportLocation": "USA, Asia, Europe"
+    }
+  }
+  
