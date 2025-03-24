@@ -5,11 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class JacksonExample {
     public static void main(String[] args) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        
-        // Java object to JSON
+
+        // Convert Java Object to JSON
         Person person = new Person("John", 30);
         String json = mapper.writeValueAsString(person);
-        System.out.println(json); // Output: {"name":"John","age":30}
+        System.out.println("Serialized JSON: " + json); // Output: {"name":"John","age":30}
+/*
+ Diff from person.toString()  as this does not follow serialization rules
+ */
+
+
     }
 }
 
@@ -23,27 +28,27 @@ class Person {
     }
 
     // Getters and setters omitted for brevity
-    
-	@Override
-	public String toString() {
-		return "Person[name=" + name + ",age=" + age + "]";
-	}
 
-	public String getName() {
-		return name;
-	}
+    @Override
+    public String toString() {
+        return "Person[name=" + name + ",age=" + age + "]";
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public int getAge() {
-		return age;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setAge(int age) {
-		this.age = age;
-	}
-	
-	
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+
 }
