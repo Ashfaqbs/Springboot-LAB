@@ -2,7 +2,6 @@ package com.ashfaq.dev.libs.fjsonjackson;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 class Product {
     public String name;
@@ -21,7 +20,7 @@ class Product {
 public class IgnoreNullVariables {
     public static void main(String[] args) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        Product p1 = new Product("Laptop", null);
+        ExampleProduct p1 = new ExampleProduct("Laptop", null);
 
         String json = mapper.writeValueAsString(p1);
         System.out.println("Serialized JSON: " + json);
