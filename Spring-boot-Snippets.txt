@@ -220,3 +220,324 @@ try {
 }
 
 
+
+package com.beamgen;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+public class GeneratorApp1 {
+
+
+    public static String generateSourceCode(JsonNode source, String dtoClassName) {
+        String type = source.get("type").asText();
+        if ("kafka".equalsIgnoreCase(type)) {
+            return String.format("""
+            PCollection<String> input = pipeline.apply("ReadFromKafka",
+                KafkaIO.<Long, String>read()
+                    .withBootstrapServers("%s")
+                    .withTopic("%s")
+                    .withKeyDeserializer(LongDeserializer.class)
+                    .withValueDeserializer(StringDeserializer.class)
+                    .withoutMetadata())
+                .apply(MapElements.into(TypeDescriptors.strings()).via(KV::getValue));
+            """,
+                    source.get("bootstrapServers").asText(),
+                    source.get("topic").asText()
+            );
+        } else if ("db".equalsIgnoreCase(type)) {
+            return String.format("""
+            PCollection<String> input = pipeline.apply("ReadFromDb",
+                JdbcIO.<String>read()
+                    .withDataSourceConfiguration(
+                        JdbcIO.DataSourceConfiguration.create(
+                            "org.postgresql.Driver", "%s")
+                            .withUsername("%s")
+                            .withPassword("%s"))
+                    .withQuery("SELECT * FROM %s")
+                    .withRowMapper(new JdbcIO.RowMapper<String>() {
+                        public String mapRow(ResultSet resultSet) throws Exception {
+                            // TODO: Map resultSet to %s DTO
+                            return resultSet.getString(1); // replace this
+                        }
+                    }));
+            """,
+                    source.get("url").asText(),
+                    source.get("username").asText(),
+                    source.get("password").asText(),
+                    source.get("table").asText(),
+                    dtoClassName
+            );
+        } else {
+            throw new RuntimeException("Unsupported source type: " + type);
+        }
+    }
+
+    public static String generateSinkCode(JsonNode sink) {
+        String type = sink.get("type").asText();
+        if ("kafka".equalsIgnoreCase(type)) {
+            return String.format("""
+            input.apply("WriteToKafka",
+                KafkaIO.<Void, String>write()
+                    .withBootstrapServers("%s")
+                    .withTopic("%s")
+                    .withValueSerializer(StringSerializer.class)
+                    .values());
+            """,
+                    sink.get("bootstrapServers").asText(),
+                    sink.get("topic").asText()
+            );
+        } else if ("db".equalsIgnoreCase(type)) {
+            return String.format("""
+            input.apply("WriteToDb",
+                JdbcIO.<String>write()
+                    .withDataSourceConfiguration(
+                        JdbcIO.DataSourceConfiguration.create(
+                            "org.postgresql.Driver", "%s")
+                            .withUsername("%s")
+                            .withPassword("%s"))
+                    .withStatement("INSERT INTO %s (id, name, price) VALUES (?, ?, ?)")
+                    .withPreparedStatementSetter((element, preparedStatement) -> {
+                        // TODO: map element to DTO fields
+                        preparedStatement.setString(1, "id");
+                        preparedStatement.setString(2, "name");
+                        preparedStatement.setDouble(3, 0.0);
+                    }));
+            """,
+                    sink.get("url").asText(),
+                    sink.get("username").asText(),
+                    sink.get("password").asText(),
+                    sink.get("table").asText()
+            );
+        } else {
+            throw new RuntimeException("Unsupported sink type: " + type);
+        }
+    }
+    public static  String generateJobClass(String jobClassName, String sourceCode, String sinkCode) {
+        return String.format("""
+        package com.cleaner.job;
+
+        import org.apache.beam.sdk.Pipeline;
+        import org.apache.beam.sdk.io.kafka.KafkaIO;
+        import org.apache.beam.sdk.io.jdbc.JdbcIO;
+        import org.apache.beam.sdk.transforms.MapElements;
+        import org.apache.beam.sdk.values.TypeDescriptors;
+        import org.apache.kafka.common.serialization.LongDeserializer;
+        import org.apache.kafka.common.serialization.StringDeserializer;
+        import org.apache.kafka.common.serialization.StringSerializer;
+        import org.apache.beam.sdk.values.KV;
+
+        import java.sql.ResultSet;
+
+        public class %s {
+            public static void main(String[] args) {
+                Pipeline pipeline = Pipeline.create();
+
+                %s
+
+                %s
+
+                pipeline.run().waitUntilFinish();
+            }
+        }
+        """, jobClassName, sourceCode, sinkCode);
+    }
+
+    public static void createDirectoryStructure(Path projectDir) throws IOException {
+        List<String> dirs = List.of(
+                "src/main/java/com/cleaner/dto",
+                "src/main/java/com/cleaner/job",
+                "src/main/resources"
+        );
+        for (String dir : dirs) {
+            Files.createDirectories(projectDir.resolve(dir));
+        }
+    }
+
+
+    public static void main(String[] args) throws Exception {
+        String configPath = "config.json";
+        JsonNode root = new ObjectMapper().readTree(new File(configPath));
+
+        String projectName = root.get("projectName").asText();
+        String dtoName = root.get("dto").get("name").asText();
+        String jobClassName = dtoName + "Job";
+
+        Path projectDir = Path.of("out", projectName);
+        Files.createDirectories(projectDir);
+
+        // Step 1: Create structure
+        createDirectoryStructure(projectDir);
+
+        // Step 2: Generate pom.xml
+        String pomContent = generatePomXml(projectName);
+        Files.writeString(projectDir.resolve("pom.xml"), pomContent);
+
+        // Step 3: Generate DTO class
+        String dtoCode = generateDtoClass(dtoName);
+        Files.writeString(projectDir.resolve("src/main/java/com/cleaner/dto/" + dtoName + ".java"), dtoCode);
+
+        // Step 4: Generate Source/Sink
+        JsonNode source = root.get("source");
+        JsonNode sink = root.get("sink");
+
+        String sourceCode = generateSourceCode(source, dtoName);
+        String sinkCode = generateSinkCode(sink);
+
+        // Step 5: Generate Job
+        String jobCode = generateJobClass(jobClassName, sourceCode, sinkCode);
+        Files.writeString(projectDir.resolve("src/main/java/com/cleaner/job/" + jobClassName + ".java"), jobCode);
+
+        System.out.println("Project generated at: " + projectDir.toAbsolutePath());
+    }
+
+    public static String generatePomXml(String projectName) {
+        return String.format("""
+        <project xmlns="http://maven.apache.org/POM/4.0.0"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+            <modelVersion>4.0.0</modelVersion>
+
+            <groupId>com.cleaner</groupId>
+            <artifactId>%s</artifactId>
+            <version>1.0-SNAPSHOT</version>
+
+            <properties>
+                <maven.compiler.source>21</maven.compiler.source>
+                <maven.compiler.target>21</maven.compiler.target>
+            </properties>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.beam</groupId>
+                    <artifactId>beam-sdks-java-core</artifactId>
+                    <version>2.54.0</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.beam</groupId>
+                    <artifactId>beam-runners-direct-java</artifactId>
+                    <version>2.54.0</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.beam</groupId>
+                    <artifactId>beam-sdks-java-io-kafka</artifactId>
+                    <version>2.54.0</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.beam</groupId>
+                    <artifactId>beam-sdks-java-io-jdbc</artifactId>
+                    <version>2.54.0</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                    <version>42.7.1</version>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.11.0</version>
+                    </plugin>
+                </plugins>
+            </build>
+        </project>
+        """, projectName);
+    }
+
+    public static String generateDtoClass(String className) {
+        if (className == null || className.trim().isEmpty()) {
+            throw new IllegalArgumentException("Class name cannot be null or empty");
+        }
+
+        return String.format("""
+        package com.cleaner.dto;
+
+        public class %s {
+            private String id;
+            private String name;
+            private double price;
+
+            // Default constructor
+            public %s() {}
+
+            // Parameterized constructor
+            public %s(String id, String name, double price) {
+                this.id = id;
+                this.name = name;
+                this.price = price;
+            }
+
+            // Getter and Setter for id
+            public String getId() {
+                return id;
+            }
+
+            public void setId(String id) {
+                this.id = id;
+            }
+
+            // Getter and Setter for name
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+
+            // Getter and Setter for price
+            public double getPrice() {
+                return price;
+            }
+
+            public void setPrice(double price) {
+                this.price = price;
+            }
+        }
+        """, className, className, className);
+    }
+
+
+}
+
+
+
+{
+  "projectName": "product-cleaner",
+  "basePackage": "com.cleaner",
+  "dto": {
+    "name": "Product",
+    "fields": {
+      "id": "String",
+      "name": "String",
+      "price": "double"
+    }
+  },
+  "source": {
+    "type": "kafka",
+    "topic": "input-topic",
+    "bootstrapServers": "kafka:9093"
+  },
+  "sink": {
+    "type": "db",
+    "url": "jdbc:postgresql://localhost:5432/mydb",
+    "username": "postgres",
+    "password": "admin",
+    "table": "products"
+  }
+}
+ 
+
